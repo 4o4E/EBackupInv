@@ -7,6 +7,7 @@ import top.e404.ebackupinv.command.CommandManager
 import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
 import top.e404.ebackupinv.listener.Listener
+import top.e404.ebackupinv.update.Update
 import top.e404.ebackupinv.util.color
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimer
@@ -20,7 +21,7 @@ class EBackupInv : JavaPlugin() {
             """&6 \ \_____\  \ \_____\  \ \_\ \_\  \ \_____\  \ \_\ \_\  \ \_____\  \ \_\    \ \_\  \ \_\\"\_\  \ \__|   """.color(),
             """&6  \/_____/   \/_____/   \/_/\/_/   \/_____/   \/_/\/_/   \/_____/   \/_/     \/_/   \/_/ \/_/   \/_/    """.color())
         const val prefix = "EBackupInv"
-        lateinit var instance: JavaPlugin
+        lateinit var instance: EBackupInv
     }
 
     override fun onEnable() {
@@ -33,6 +34,7 @@ class EBackupInv : JavaPlugin() {
         val d = Config.check * 60 * 60 * 20
         runTaskTimer(d, d, BackupTaskManager::cleanTimeout)
         BackupTaskManager.hotswap()
+        Update.init()
         for (line in logo) info(line)
         info("&a加载完成".color())
     }
