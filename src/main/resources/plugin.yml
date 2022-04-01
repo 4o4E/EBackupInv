@@ -1,0 +1,16 @@
+name: EBackupInv
+version: "${version}"
+main: top.e404.ebackupinv.EBackupInv
+api-version: 1.13
+authors: [ 404E ]
+commands:
+  ebackupinv:
+    description: 插件主命令
+    aliases:
+      - ebinv
+      - ebi
+      - eb
+permissions:
+  ebackupinv.admin:
+    default: op
+    description: 允许使用插件指令
