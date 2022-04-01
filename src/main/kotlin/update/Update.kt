@@ -5,7 +5,10 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import top.e404.ebackupinv.EBackupInv
 import top.e404.ebackupinv.listener.EListener
-import top.e404.ebackupinv.util.*
+import top.e404.ebackupinv.util.info
+import top.e404.ebackupinv.util.runTaskTimerAsync
+import top.e404.ebackupinv.util.sendMsgWithPrefix
+import top.e404.ebackupinv.util.warn
 import java.net.URL
 
 object Update : EListener {
@@ -37,7 +40,7 @@ object Update : EListener {
                     latest = v
                     info("""&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
                         |&f更新发布于:&b $mcbbs
-                        |&f开源于:&b $github""".trimMargin().color())
+                        |&f开源于:&b $github""".trimMargin())
                     return@runCatching
                 }
             }.onFailure {
@@ -52,6 +55,6 @@ object Update : EListener {
         if (!player.isOp || latest == null) return@apply
         player.sendMsgWithPrefix("""&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
             |&f更新发布于:&b $mcbbs
-            |&f开源于:&b $github""".trimMargin().color())
+            |&f开源于:&b $github""".trimMargin())
     }
 }
