@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "top.e404"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -35,6 +35,7 @@ tasks {
             expand(project.properties)
         }
     }
+
     shadowJar {
         archiveFileName.set("${project.name}-${project.version}.jar")
         relocate("org.bstats", "top.e404.ebackupinv.bstats")
