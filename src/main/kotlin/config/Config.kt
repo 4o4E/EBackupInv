@@ -6,9 +6,11 @@ object Config : AbstractConfig("config.yml") {
     var duration = -1L
     var keep = -1
     var check = -1L
+    var onDeath = false
     override fun YamlConfiguration.onLoad() {
         duration = getLong("duration")
         keep = getInt("keep")
         check = getLong("check")
+        onDeath = getBoolean("on_death")
     }
 }
