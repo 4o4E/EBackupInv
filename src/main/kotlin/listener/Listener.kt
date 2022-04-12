@@ -16,7 +16,7 @@ object Listener : EListener {
     fun PlayerQuitEvent.onQuit() = BackupTaskManager.onPlayerQuit(player)
 
     @EventHandler
-    fun PlayerDeathEvent.onDeath() = apply {
+    fun PlayerDeathEvent.onDeath() = run {
         if (Config.onDeath) BackupData.savePlayer(entity)
     }
 }
