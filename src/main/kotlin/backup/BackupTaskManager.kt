@@ -7,6 +7,7 @@ import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimer
+import top.e404.ebackupinv.util.runTaskTimerAsync
 
 object BackupTaskManager {
     private val tasks = HashMap<Player, BukkitTask>()
@@ -30,7 +31,7 @@ object BackupTaskManager {
      * @return BukkitTask
      */
     fun schedule(player: Player) =
-        runTaskTimer(Config.duration, Config.duration) {
+        runTaskTimerAsync(Config.duration, Config.duration) {
             BackupData.savePlayer(player)
         }
 

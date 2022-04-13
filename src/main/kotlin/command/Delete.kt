@@ -37,7 +37,7 @@ object Delete : AbstractCommand(
         if (args.size == 2) {
             val count = backups.data.size
             backups.data.clear()
-            BackupData.save(null)
+            BackupData.scheduleSave()
             sender.sendMsgWithPrefix("&f已删除玩家&6${args[1]}&f的${count}个备份")
             return
         }
@@ -52,7 +52,7 @@ object Delete : AbstractCommand(
                 sender.sendMsgWithPrefix("&c不存在玩家&6${args[1]}&c的名为${t}的备份")
                 return
             }
-            BackupData.save(null)
+            BackupData.scheduleSave()
             sender.sendMsgWithPrefix("&a已删除${backup.info()}")
             return
         }

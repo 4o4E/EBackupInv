@@ -10,6 +10,7 @@ import top.e404.ebackupinv.listener.Listener
 import top.e404.ebackupinv.update.Update
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimer
+import top.e404.ebackupinv.util.runTaskTimerAsync
 
 class EBackupInv : JavaPlugin() {
     companion object {
@@ -31,10 +32,14 @@ class EBackupInv : JavaPlugin() {
         CommandManager.register("ebackupinv")
         Listener.register()
         val d = Config.check * 60 * 60 * 20
-        runTaskTimer(d, d, BackupTaskManager::cleanTimeout)
+        runTaskTimerAsync(d, d, BackupTaskManager::cleanTimeout)
         BackupTaskManager.hotswap()
         Update.init()
         for (line in logo) info(line)
         info("&a加载完成")
+    }
+
+    override fun onDisable() {
+        BackupData.save(null)
     }
 }

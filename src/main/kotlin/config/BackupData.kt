@@ -2,18 +2,24 @@ package top.e404.ebackupinv.config
 
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.backup.BackupTaskManager.isUUID
 import top.e404.ebackupinv.data.Backup
 import top.e404.ebackupinv.data.Backup.Companion.toItemMap
 import top.e404.ebackupinv.data.PlayerBackups
 import top.e404.ebackupinv.data.PlayerBackups.Companion.getPlayerBackups
 import top.e404.ebackupinv.util.info
+import top.e404.ebackupinv.util.runTaskLaterAsync
 import top.e404.ebackupinv.util.uuid
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     private val sdf = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
+    private const val saveDelay = 20L * 600 // 文件保存间隔
+    private var needSave = AtomicBoolean(false)
+    private var saveTask: BukkitTask? = null
 
     // name, backup
     var data = mutableMapOf<String, PlayerBackups>()
@@ -27,6 +33,10 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
         for ((name, backup) in data.entries) {
             set(name, backup.toConfig())
         }
+    }
+
+    override fun YamlConfiguration.afterSave() {
+        info("保存背包数据到文件")
     }
 
     fun getPlayerBackups(nameOrUuid: String) = if (nameOrUuid.isUUID()) getPlayerBackupsByUuid(nameOrUuid)
@@ -45,8 +55,19 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
             data.getOrPut(player.name) {
                 PlayerBackups(player.name, player.uuid(), time, mutableMapOf())
             }.data[time] = it
-            info("自动保存玩家`${player.name}`的背包, ${it.info()}")
-            BackupData.save(null)
+            info("保存玩家`${player.name}`的背包, ${it.info()}")
+            scheduleSave()
+        }
+    }
+
+    @Synchronized
+    fun scheduleSave() {
+        if (!needSave.get()) {
+            needSave.set(true)
+            saveTask = runTaskLaterAsync(saveDelay) {
+                super.save(null)
+                saveTask = null
+            }
         }
     }
 

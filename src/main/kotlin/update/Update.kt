@@ -51,8 +51,8 @@ object Update : EListener {
     }
 
     @EventHandler
-    fun onOpJoinGame(event: PlayerJoinEvent) = event.apply {
-        if (!player.isOp || latest == null) return@apply
+    fun onOpJoinGame(event: PlayerJoinEvent) = event.run {
+        if (!player.isOp || latest == null) return@run
         player.sendMsgWithPrefix("""&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
             |&f更新发布于:&b $mcbbs
             |&f开源于:&b $github""".trimMargin())
