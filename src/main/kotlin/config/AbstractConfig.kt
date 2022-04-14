@@ -21,7 +21,7 @@ abstract class AbstractConfig(
     val clearBeforeSave: Boolean = false,
 ) {
     val plugin = EBackupInv.instance
-    val default = plugin.getResource(jarPath)!!.readBytes().decodeToString()
+    val default = plugin.getResource(jarPath)!!.use { it.readBytes().decodeToString() }
     val file = plugin.dataFolder.resolve(jarPath)
     lateinit var config: YamlConfiguration
 
