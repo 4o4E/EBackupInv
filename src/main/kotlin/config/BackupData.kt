@@ -8,6 +8,7 @@ import top.e404.ebackupinv.data.Backup
 import top.e404.ebackupinv.data.Backup.Companion.toItemMap
 import top.e404.ebackupinv.data.PlayerBackups
 import top.e404.ebackupinv.data.PlayerBackups.Companion.getPlayerBackups
+import top.e404.ebackupinv.util.debug
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskLaterAsync
 import top.e404.ebackupinv.util.uuid
@@ -36,7 +37,7 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     }
 
     override fun YamlConfiguration.afterSave() {
-        info("保存背包数据到文件")
+        debug("保存背包数据到文件")
     }
 
     fun getPlayerBackups(nameOrUuid: String) = if (nameOrUuid.isUUID()) getPlayerBackupsByUuid(nameOrUuid)
@@ -55,7 +56,7 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
             data.getOrPut(player.name) {
                 PlayerBackups(player.name, player.uuid(), time, mutableMapOf())
             }.data[time] = it
-            info("保存玩家`${player.name}`的背包, ${it.info()}")
+            debug("保存玩家`${player.name}`的背包, ${it.info()}")
             scheduleSave()
         }
     }

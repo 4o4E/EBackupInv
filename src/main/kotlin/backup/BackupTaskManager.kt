@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
+import top.e404.ebackupinv.util.debug
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimer
 import top.e404.ebackupinv.util.runTaskTimerAsync
@@ -41,7 +42,7 @@ object BackupTaskManager {
     fun cleanTimeout() {
         val t = System.currentTimeMillis() - Config.keep * 60 * 60 * 1000
         val count = BackupData.data.values.sumOf { it.cleanTimeout(t) }
-        info("自动清理过期备份共${count}个")
+        debug("自动清理过期备份共${count}个")
     }
 
     /**
