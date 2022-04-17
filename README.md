@@ -14,6 +14,10 @@
 5. `/eb delete <玩家ID>` 删除此玩家的所有背包
 6. `/eb delete <玩家ID> <背包备份文件名>` 删除背包
 
+## 配置文件
+
+[config.yml](src/main/resources/config.yml)
+
 ## 权限
 
 `ebackupinv.admin` 允许使用插件指令
