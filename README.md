@@ -2,7 +2,7 @@
 
 # EBackupInv
 
-> 基于BukkitAPI的背包、末影箱备份插件, 适用于Spigot或Paper以及其他绝大多数Bukkit的下游分支核心, 支持设置备份间隔，备份自动清理
+> 基于BukkitAPI的背包、末影箱备份插件, 适用于Spigot或Paper以及其他绝大多数Bukkit的下游分支核心，支持设置备份间隔，备份自动清理
 
 [![Release](https://img.shields.io/github/v/release/4o4E/EBackupInv?label=Release)](https://github.com/4o4E/EBackupInv/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/4o4E/EBackupInv/total?label=Download)](https://github.com/4o4E/EBackupInv/releases)
