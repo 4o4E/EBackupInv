@@ -4,6 +4,7 @@ import com.google.gson.JsonParser
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import top.e404.ebackupinv.EBackupInv
+import top.e404.ebackupinv.config.Config
 import top.e404.ebackupinv.listener.EListener
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimerAsync
@@ -33,14 +34,18 @@ object Update : EListener {
         nowVer = instance.description.version
         register()
         runTaskTimerAsync(0, 20 * 60 * 60 * 6) {
+            if (!Config.update) return@runTaskTimerAsync
             runCatching {
                 val v = getLatest()
                 val now = instance.description.version
                 if (v.asVersion() > now.asVersion()) {
                     latest = v
-                    info("""&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
-                        |&f更新发布于:&b $mcbbs
-                        |&f开源于:&b $github""".trimMargin())
+                    info(
+                        """&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
+                            |&f更新发布于:&b $mcbbs
+                            |&f开源于:&b $github
+                        """.trimMargin()
+                    )
                     return@runCatching
                 }
             }.onFailure {
@@ -52,9 +57,12 @@ object Update : EListener {
 
     @EventHandler
     fun onOpJoinGame(event: PlayerJoinEvent) = event.run {
-        if (!player.isOp || latest == null) return@run
-        player.sendMsgWithPrefix("""&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
-            |&f更新发布于:&b $mcbbs
-            |&f开源于:&b $github""".trimMargin())
+        if (!player.isOp || latest == null || !Config.update) return@run
+        player.sendMsgWithPrefix(
+            """&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
+                |&f更新发布于:&b $mcbbs
+                |&f开源于:&b $github
+            """.trimMargin()
+        )
     }
 }
