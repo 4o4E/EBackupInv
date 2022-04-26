@@ -11,7 +11,7 @@ import top.e404.ebackupinv.util.sendMsgWithPrefix
 object View : AbstractCommand(
     "view",
     true,
-    "ebackup.admin"
+    "ebackupinv.admin"
 ) {
     override fun help() = "&a/eb view <inv/ec> <玩家id> <备份文件名> &f浏览玩家备份的背包/末影箱(可以取出, 但修改结果不写入备份)"
 
@@ -26,7 +26,10 @@ object View : AbstractCommand(
             2 -> complete.addAll(type)
             3 -> complete.addAll(BackupData.data.keys)
             4 -> BackupData.getPlayerBackups(args[2])?.run {
-                data.keys.forEach { complete.add(it.toString()) }
+                data.keys.forEach {
+                    val s = it.toString()
+                    if (s.startsWith(args[3], true)) complete.add(s)
+                }
             }
         }
     }

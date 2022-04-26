@@ -7,7 +7,7 @@ import top.e404.ebackupinv.util.sendMsgWithPrefix
 object ListInv : AbstractCommand(
     "list",
     false,
-    "ebackup.admin"
+    "ebackupinv.admin"
 ) {
     override fun help() = """&a/eb list &f查看所有备份过的玩家名
         |&a/eb list <玩家id> &f查看所有备份""".trimMargin()

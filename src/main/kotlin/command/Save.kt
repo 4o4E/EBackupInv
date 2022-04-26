@@ -8,7 +8,7 @@ import top.e404.ebackupinv.util.sendMsgWithPrefix
 object Save : AbstractCommand(
     "save",
     false,
-    "ebackup.admin"
+    "ebackupinv.admin"
 ) {
     override fun help() = """&a/eb save <玩家ID> &f保存玩家的背包""".trimMargin()
 
@@ -34,6 +34,10 @@ object Save : AbstractCommand(
             return
         }
         val backup = BackupData.savePlayer(player)
+        if (backup == null) {
+            sender.sendMsgWithPrefix("&c空背包将不会被保存")
+            return
+        }
         sender.sendMsgWithPrefix("&a已保存, ${backup.info()}")
     }
 }

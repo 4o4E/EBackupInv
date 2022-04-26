@@ -7,7 +7,7 @@ import top.e404.ebackupinv.util.sendMsgWithPrefix
 object Delete : AbstractCommand(
     "delete",
     false,
-    "ebackup.admin"
+    "ebackupinv.admin"
 ) {
     override fun help() = """&a/eb delete <玩家ID> &f删除此玩家的所有背包
         |&a/eb delete <玩家ID> <背包备份文件名> &f删除背包""".trimMargin()

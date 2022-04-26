@@ -10,7 +10,7 @@ import top.e404.ebackupinv.util.warn
 object Reload : AbstractCommand(
     "reload",
     false,
-    "ebackup.admin"
+    "ebackupinv.admin"
 ) {
     override fun help() = "&a/eb reload &f重载插件"
 
