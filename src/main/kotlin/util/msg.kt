@@ -2,7 +2,7 @@ package top.e404.ebackupinv.util
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import top.e404.ebackupinv.EBackupInv
+import top.e404.ebackupinv.config.Config
 
 /**
  * 转换颜色代码
@@ -18,7 +18,7 @@ fun String.color() =
  * @return 添加了插件前缀的字符串
  */
 fun String.withPrefix() =
-    "&7[&a${EBackupInv.prefix}&7] $this".color()
+    "${Config.prefix} $this".color()
 
 private const val noperm = "&c无权限"
 private const val notPlayer = "&c仅玩家可用"

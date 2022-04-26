@@ -6,13 +6,11 @@ import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
 import top.e404.ebackupinv.util.debug
-import top.e404.ebackupinv.util.info
-import top.e404.ebackupinv.util.runTaskTimer
 import top.e404.ebackupinv.util.runTaskTimerAsync
 
 object BackupTaskManager {
     private val tasks = HashMap<Player, BukkitTask>()
-    private val uuidRegex = Regex("[a-z0-9]{8}(-[a-z0-9]{4}){3}-[a-z0-9]{12}")
+    private val uuidRegex = Regex("[a-z\\d]{8}(-[a-z\\d]{4}){3}-[a-z\\d]{12}")
 
     fun String.isUUID() = uuidRegex.matches(this)
 

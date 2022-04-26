@@ -14,3 +14,6 @@ permissions:
   ebackupinv.admin:
     default: op
     description: 允许使用插件指令
+  ebackupinv.saveme:
+    default: op
+    description: 允许保存自己背包

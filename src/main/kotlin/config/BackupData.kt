@@ -9,17 +9,14 @@ import top.e404.ebackupinv.data.Backup.Companion.toItemMap
 import top.e404.ebackupinv.data.PlayerBackups
 import top.e404.ebackupinv.data.PlayerBackups.Companion.getPlayerBackups
 import top.e404.ebackupinv.util.debug
-import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskLaterAsync
 import top.e404.ebackupinv.util.uuid
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 
 object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     private val sdf = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
     private const val saveDelay = 20L * 600 // 文件保存间隔
-    private var needSave = AtomicBoolean(false)
     private var saveTask: BukkitTask? = null
 
     // name, backup
@@ -48,10 +45,11 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     fun getBackupByName(name: String, time: Long) = getPlayerBackupsByName(name)?.getBackup(time)
     fun getBackupBuUuid(uuid: String, time: Long) = getPlayerBackupsByUuid(uuid)?.getBackup(time)
 
-    fun savePlayer(player: Player): Backup {
+    fun savePlayer(player: Player): Backup? {
         val time = System.currentTimeMillis()
         val inv = player.inventory.toItemMap()
         val ec = player.enderChest.toItemMap()
+        if (inv.isEmpty() && ec.isEmpty()) return null
         return Backup(time, inv, ec).also {
             data.getOrPut(player.name) {
                 PlayerBackups(player.name, player.uuid(), time, mutableMapOf())
@@ -63,14 +61,12 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
 
     @Synchronized
     fun scheduleSave() {
-        if (!needSave.get()) {
-            needSave.set(true)
-            saveTask = runTaskLaterAsync(saveDelay) {
-                super.save(null)
-                saveTask = null
-            }
+        if (saveTask != null) return
+        saveTask = runTaskLaterAsync(saveDelay) {
+            BackupData.save(null)
+            saveTask = null
         }
     }
 
-    fun Long.asTime() = sdf.format(Date(this))
+    fun Long.asTime() = sdf.format(Date(this))!!
 }

@@ -9,6 +9,7 @@ object CommandManager : AbstractCommandManager(
         Save,
         ListInv,
         View,
-        Delete
+        Delete,
+        SaveMe,
     )
 )
