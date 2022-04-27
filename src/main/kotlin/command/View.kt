@@ -24,7 +24,9 @@ object View : AbstractCommand(
     ) {
         when (args.size) {
             2 -> complete.addAll(type)
-            3 -> complete.addAll(BackupData.data.keys)
+            3 -> BackupData.data.keys.forEach { s ->
+                if (s.startsWith(args[2], true)) complete.add(s)
+            }
             4 -> BackupData.getPlayerBackups(args[2])?.run {
                 data.keys.forEach {
                     val s = it.toString()

@@ -40,10 +40,8 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     fun getPlayerBackups(nameOrUuid: String) = if (nameOrUuid.isUUID()) getPlayerBackupsByUuid(nameOrUuid)
     else getPlayerBackupsByName(nameOrUuid)
 
-    fun getPlayerBackupsByName(name: String) = data[name]
+    fun getPlayerBackupsByName(name: String) = data.entries.firstOrNull { it.key.equals(name, true) }?.value
     fun getPlayerBackupsByUuid(uuid: String) = data.values.firstOrNull { it.uuid == uuid }
-    fun getBackupByName(name: String, time: Long) = getPlayerBackupsByName(name)?.getBackup(time)
-    fun getBackupBuUuid(uuid: String, time: Long) = getPlayerBackupsByUuid(uuid)?.getBackup(time)
 
     fun savePlayer(player: Player): Backup? {
         val time = System.currentTimeMillis()
