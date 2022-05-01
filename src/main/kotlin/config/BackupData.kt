@@ -13,6 +13,7 @@ import top.e404.ebackupinv.util.runTaskLaterAsync
 import top.e404.ebackupinv.util.uuid
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
     private val sdf = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
@@ -50,7 +51,7 @@ object BackupData : AbstractConfig("data.yml", clearBeforeSave = true) {
         if (inv.isEmpty() && ec.isEmpty()) return null
         return Backup(time, inv, ec).also {
             data.getOrPut(player.name) {
-                PlayerBackups(player.name, player.uuid(), time, mutableMapOf())
+                PlayerBackups(player.name, player.uuid(), time, ConcurrentHashMap())
             }.data[time] = it
             debug("保存玩家`${player.name}`的背包, ${it.info()}")
             scheduleSave()

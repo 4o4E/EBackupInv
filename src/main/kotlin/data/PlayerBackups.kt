@@ -4,6 +4,7 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import top.e404.ebackupinv.config.BackupData.asTime
 import top.e404.ebackupinv.data.Backup.Companion.getBackup
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 代表一个玩家的所有备份
@@ -17,7 +18,7 @@ data class PlayerBackups(
     val name: String,
     val uuid: String,
     val last: Long,
-    val data: MutableMap<Long, Backup>,
+    val data: ConcurrentHashMap<Long, Backup>,
 ) {
     companion object {
         fun ConfigurationSection.getPlayerBackups(path: String) =
@@ -30,11 +31,11 @@ data class PlayerBackups(
                 )
             }
 
-        fun ConfigurationSection.getPlayerBackupsMap(path: String): MutableMap<Long, Backup> =
+        fun ConfigurationSection.getPlayerBackupsMap(path: String): ConcurrentHashMap<Long, Backup> =
             getConfigurationSection(path)!!.let { config ->
-                config.getKeys(false).associate { key ->
+                ConcurrentHashMap(config.getKeys(false).associate { key ->
                     key.toLong() to config.getBackup(key)
-                }.toMutableMap()
+                })
             }
 
         fun MutableMap<Long, Backup>.toConfig() =
