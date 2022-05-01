@@ -11,5 +11,6 @@ object CommandManager : AbstractCommandManager(
         View,
         Delete,
         SaveMe,
+        SaveFile,
     )
 )

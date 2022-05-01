@@ -27,3 +27,37 @@ on_death: false
 
 # 玩家手动保存冷却时长, 单位秒
 cooldown: 600
+
+# 文件保存时间间隔, 单位分钟
+file_duration: 10
+
+# 备份文件存放的文件夹路径
+# 可用占位符:
+# {plugin} EBackupInv插件数据文件夹
+# {server} 服务端根目录
+file_path: "{server}/backup"
+
+# 备份的时间戳格式
+# 不建议修改, 若需要修改则需要连带下方的file_regex一起修改
+file_time: "yyyy.MM.dd_HH.mm.ss"
+
+# 保留的文件数量
+# 设置为小于1的数以禁用数量检测
+file_retain: 10
+
+# 保存的文件名
+# 不建议修改, 若需要修改则需要连带下方的file_regex一起修改
+# {time} 备份的时间
+file_name: "{time}.zip"
+
+# 检测备份文件名的正则
+# 用于匹配清理旧文件
+file_regex: "\d{4}\.\d{2}\.\d{2}_\d{2}\.\d{2}\.\d{2}\.zip"
+
+# 需要备份的文件路径
+# 可用占位符:
+# {plugin} EBackupInv插件数据文件夹
+# {server} 服务端根目录
+files:
+  - "{server}/plugins/examplePlugin"
+  - "{server}/yourDir/yourFile"

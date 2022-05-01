@@ -4,6 +4,7 @@ import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import top.e404.ebackupinv.backup.BackupTaskManager
+import top.e404.ebackupinv.backup.FileBackupTaskManager
 import top.e404.ebackupinv.command.CommandManager
 import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
@@ -35,6 +36,7 @@ class EBackupInv : JavaPlugin() {
         runTaskTimerAsync(d, d, BackupTaskManager::cleanTimeout)
         BackupTaskManager.hotswap()
         Update.init()
+        FileBackupTaskManager.schedule()
         for (line in logo) info(line)
         info("&a加载完成")
     }
