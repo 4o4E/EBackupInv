@@ -27,9 +27,8 @@ object ListInv : AbstractCommand(
                 sender.sendMsgWithPrefix("&c还没有备份数据")
                 return
             }
-            sender.sendMsgWithPrefix("""&a备份过的玩家: &7[
-                |  &6${BackupData.data.keys.joinToString("&7,\n  &6")}
-                |&7]""".trimMargin())
+            val list = BackupData.data.keys.joinToString("&7, &6")
+            sender.sendMsgWithPrefix("&a备份过的玩家: &7[&6$list&7]")
             return
         }
         if (args.size == 2) {
@@ -43,9 +42,8 @@ object ListInv : AbstractCommand(
                 sender.sendMsgWithPrefix("&c还没有玩家&6${args[1]}&c的备份数据")
                 return
             }
-            sender.sendMsgWithPrefix("""&f玩家&6${args[1]}&f的备份有&7[&2
-                |  ${bps.joinToString("&7,\n  &2") { it.info() }}
-                |&7]""".trimMargin())
+            val list = bps.joinToString("&7,\n  &2") { it.info() }
+            sender.sendMsgWithPrefix("&f玩家&6${args[1]}&f的备份有&7[&2$list&7]")
             return
         }
         sender.sendMsgWithPrefix(help())
