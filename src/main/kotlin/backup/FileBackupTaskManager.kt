@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.EBackupInv
 import top.e404.ebackupinv.config.Config
+import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.warn
 import java.io.File
 import java.text.SimpleDateFormat
@@ -17,12 +18,15 @@ object FileBackupTaskManager {
 
     fun schedule() {
         task?.cancel()
-        val duration = Config.duration * 60 * 20
+        val duration = Config.fileDuration * 60 * 20
+        info("计划保存任务, 保存间隔${Config.fileDuration}分钟")
         task = scheduler.runTaskTimerAsynchronously(
             EBackupInv.instance,
             Runnable {
                 try {
+                    info("开始保存文件")
                     backup()
+                    info("完成保存文件")
                 } catch (t: Throwable) {
                     warn("保存时出现异常", t)
                 }
