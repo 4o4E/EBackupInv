@@ -58,6 +58,7 @@ file_regex: "\d{4}\.\d{2}\.\d{2}_\d{2}\.\d{2}\.\d{2}\.zip"
 # 可用占位符:
 # {plugin} EBackupInv插件数据文件夹
 # {server} 服务端根目录
+# 若文件都不存在则不会创建备份文件
 files:
   - "{server}/plugins/examplePlugin"
   - "{server}/yourDir/yourFile"
