@@ -54,21 +54,23 @@ object Update : EListener {
 
     @EventHandler
     fun onOpJoinGame(event: PlayerJoinEvent) = event.run {
-        if (!player.isOp || latest == null || !Config.update) return@run
-        player.sendMsgWithPrefix(
-            """&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
-                |&f更新发布于:&b $mcbbs
-                |&f开源于:&b $github
-            """.trimMargin()
-        )
+        if (!player.isOp || !Config.update) return@run
+        latest.let {
+            if (it != null && it > nowVer) player.sendMsgWithPrefix(
+                """&f插件有更新哦, 当前版本: &c$nowVer&f, 最新版本: &a$latest
+                    |&f更新发布于:&b $mcbbs
+                    |&f开源于:&b $github
+                """.trimMargin()
+            )
+        }
     }
 
     private fun String.asVer() =
         split(".").run {
-            Ver(get(0).toInt(), get(1).toInt(), get(2).toInt(),)
+            Ver(get(0).toInt(), get(1).toInt(), get(2).toInt())
         }
 
-    private data class Ver(val fv: Int, val sv: Int, val tv: Int, ) {
+    private data class Ver(val fv: Int, val sv: Int, val tv: Int) {
         override fun toString() = "$fv.$sv.$tv"
         operator fun compareTo(v: Ver): Int {
             val f = fv - v.fv
