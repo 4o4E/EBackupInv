@@ -11,6 +11,7 @@ object Config : AbstractConfig("config.yml") {
     var check = 3L
     var onDeath = false
     var cooldown = 600L
+    var fileEnable = false
     var fileDuration = 10L
     var filePath = "{plugin}/backup"
     var fileTime = "yyyy.MM.dd_HH.mm.ss"
@@ -27,6 +28,7 @@ object Config : AbstractConfig("config.yml") {
         check = getLong("check")
         onDeath = getBoolean("on_death")
         cooldown = getLong("cooldown")
+        fileEnable = getBoolean("file_enable")
         fileDuration = getLong("file_duration")
         filePath = getString("file_path") ?: "{plugin}/backup"
         fileTime = getString("file_time") ?: "yyyy.MM.dd_HH.mm.ss"

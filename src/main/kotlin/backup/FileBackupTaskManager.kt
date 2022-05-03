@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.EBackupInv
 import top.e404.ebackupinv.config.Config
+import top.e404.ebackupinv.util.debug
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.warn
 import java.io.File
@@ -15,18 +16,19 @@ import java.util.zip.ZipOutputStream
 object FileBackupTaskManager {
     private val scheduler = Bukkit.getScheduler()
     private var task: BukkitTask? = null
+    private val pluginPath = EBackupInv.instance.dataFolder.absolutePath
+    private val serverPath = File("").absolutePath
 
     fun schedule() {
         task?.cancel()
+        if (!Config.fileEnable) return
         val duration = Config.fileDuration * 60 * 20
         info("计划保存任务, 保存间隔${Config.fileDuration}分钟")
         task = scheduler.runTaskTimerAsynchronously(
             EBackupInv.instance,
             Runnable {
                 try {
-                    info("开始保存文件")
                     backup()
-                    info("完成保存文件")
                 } catch (t: Throwable) {
                     warn("保存时出现异常", t)
                 }
@@ -38,33 +40,31 @@ object FileBackupTaskManager {
 
     fun backup() {
         val backupDir = File(
-            Config.filePath.placeholders(
-                "plugin" to EBackupInv.instance.dataFolder.absolutePath,
-                "server" to File("").absolutePath
-            )
+            Config.filePath.placeholders("plugin" to pluginPath, "server" to serverPath)
         ).apply { mkdirs() }
         val time = SimpleDateFormat(Config.fileTime).format(Date())
         val zip = backupDir.resolve(
-            Config.fileName.placeholders(
-                "time" to time
-            )
+            Config.fileName.placeholders("time" to time)
         )
         val files = Config.files.map {
-            File(
-                it.placeholders(
-                    "plugin" to EBackupInv.instance.dataFolder.absolutePath,
-                    "server" to File("").absolutePath
-                )
-            )
+            File(it.placeholders("plugin" to pluginPath, "server" to serverPath))
         }
         if (files.isEmpty()) return
+        val zipPath = zip.absolutePath
+        info("开始保存文件$zipPath")
         zip.outputStream().use { fos ->
             fos.buffered().use { bos ->
                 ZipOutputStream(bos).use { zos ->
-                    for (dir in files) if (dir.exists()) backup(zos, dir, dir.name)
+                    for (dir in files) if (dir.exists()) {
+                        val name = dir.name
+                        debug("保存${name}中")
+                        backup(zos, dir, name)
+                        debug("保存${name}完成")
+                    }
                 }
             }
         }
+        info("完成保存文件$zipPath")
         clean(backupDir)
     }
 
@@ -85,13 +85,16 @@ object FileBackupTaskManager {
         val sorted = filter.map {
             val date = it.name.removeSuffix(".zip")
             SimpleDateFormat(Config.fileTime).parse(date).time to it
-        }.sortedByDescending {
+        }.sortedBy {
             it.first
         }.toMutableList()
         repeat(Config.fileRetain) {
             sorted.removeLastOrNull()
         }
-        sorted.forEach { it.second.delete() }
+        sorted.forEach { (_, f) ->
+            debug("清理过期文件: ${f.name}")
+            f.delete()
+        }
     }
 
     private fun String.placeholders(vararg placeholder: Pair<String, String>): String {
