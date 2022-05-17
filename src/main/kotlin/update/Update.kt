@@ -1,18 +1,19 @@
 package top.e404.ebackupinv.update
 
 import com.google.gson.JsonParser
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import top.e404.ebackupinv.EBackupInv
 import top.e404.ebackupinv.config.Config
-import top.e404.ebackupinv.listener.EListener
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimerAsync
 import top.e404.ebackupinv.util.sendMsgWithPrefix
 import top.e404.ebackupinv.util.warn
 import java.net.URL
 
-object Update : EListener {
+object Update : Listener {
     private const val url = "https://api.github.com/repos/4o4E/EBackupInv/releases"
     private const val mcbbs = "https://www.mcbbs.net/thread-1321213-1-1.html"
     private const val github = "https://github.com/4o4E/EBackupInv"
@@ -29,7 +30,7 @@ object Update : EListener {
     fun init() {
         val instance = EBackupInv.instance
         nowVer = instance.description.version.asVer()
-        register()
+        Bukkit.getPluginManager().registerEvents(this, EBackupInv.instance)
         runTaskTimerAsync(0, 20 * 60 * 60 * 6) {
             if (!Config.update) return@runTaskTimerAsync
             runCatching {

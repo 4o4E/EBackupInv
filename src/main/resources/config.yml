@@ -1,4 +1,3 @@
-# debug
 # 若设置为true则会在后台输出备份的详细信息
 debug: false
 
@@ -16,7 +15,7 @@ prefix: "&7[&aEBackupInv&7]"
 duration: 216000
 
 # 备份保留时长, 单位小时
-keep: 72
+keep: 48
 
 # 运行清理超时背包任务的时间间隔, 单位小时
 # 重载无效

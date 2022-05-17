@@ -1,7 +1,7 @@
 name: EBackupInv
 version: "${version}"
 main: top.e404.ebackupinv.EBackupInv
-api-version: 1.13
+api-version: 1.15
 authors: [ 404E ]
 commands:
   ebackupinv:

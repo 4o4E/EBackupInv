@@ -1,7 +1,8 @@
 package top.e404.ebackupinv.command
 
 import org.bukkit.command.CommandSender
-import top.e404.ebackupinv.config.BackupData
+import top.e404.ebackupinv.backup.PlayerBackupManager
+import top.e404.ebackupinv.util.runTaskAsync
 import top.e404.ebackupinv.util.sendMsgWithPrefix
 
 object Delete : AbstractCommand(
@@ -10,7 +11,8 @@ object Delete : AbstractCommand(
     "ebackupinv.admin"
 ) {
     override fun help() = """&a/eb delete <玩家ID> &f删除此玩家的所有背包
-        |&a/eb delete <玩家ID> <背包备份文件名> &f删除背包""".trimMargin()
+        |&a/eb delete <玩家ID> <背包备份文件名> &f删除背包
+    """.trimMargin()
 
     override fun onTabComplete(
         sender: CommandSender,
@@ -18,9 +20,17 @@ object Delete : AbstractCommand(
         complete: MutableList<String>,
     ) {
         when (args.size) {
-            2 -> complete.addAll(BackupData.data.keys)
-            3 -> BackupData.getPlayerBackupsByName(args[1])?.run {
-                for (key in data.keys) complete.add(key.toString())
+            2 -> {
+                val last = args.last()
+                PlayerBackupManager.index.forEach {
+                    if (it.name.startsWith(last, true)) complete.add(it.name)
+                }
+            }
+            3 -> {
+                val last = args.last()
+                PlayerBackupManager.index.forEach {
+                    if (it.name.startsWith(last, true)) complete.add(it.name)
+                }
             }
         }
     }
@@ -29,31 +39,36 @@ object Delete : AbstractCommand(
         sender: CommandSender,
         args: Array<out String>,
     ) {
-        val backups = BackupData.getPlayerBackups(args[1])
-        if (backups == null) {
+        val index = PlayerBackupManager[args[1]]
+        if (index == null) {
             sender.sendMsgWithPrefix("&c不存在玩家&6${args[1]}&c数据")
             return
         }
         if (args.size == 2) {
-            val count = backups.data.size
-            backups.data.clear()
-            BackupData.scheduleSave()
+            val count = index.backups.size
+            index.backups.clear()
+            PlayerBackupManager.scheduleSave()
             sender.sendMsgWithPrefix("&f已删除玩家&6${args[1]}&f的${count}个备份")
             return
         }
         if (args.size == 3) {
-            val t = args[2].toLongOrNull()
-            if (t == null) {
-                sender.sendMsgWithPrefix("&c${t}不是有效的备份名")
+            val stamp = args[2].toLongOrNull()
+            if (stamp == null) {
+                sender.sendMsgWithPrefix("&c${args[2]}不是有效的备份名")
                 return
             }
-            val backup = backups.data.remove(t)
-            if (backup == null) {
-                sender.sendMsgWithPrefix("&c不存在玩家&6${args[1]}&c的名为${t}的备份")
+            if (!index.backups.remove(stamp)) {
+                sender.sendMsgWithPrefix("&c玩家&6${args[1]}&c没有名为&6${stamp}&c的备份")
                 return
             }
-            BackupData.scheduleSave()
-            sender.sendMsgWithPrefix("&a已删除${backup.info()}")
+            PlayerBackupManager.scheduleSave()
+            val file = index.playerDir.resolve("$stamp.yml")
+            if (!file.exists()) {
+                sender.sendMsgWithPrefix("&c移除玩家&6${args[1]}&c的无效备份&6${stamp}")
+                return
+            }
+            runTaskAsync { file.delete() }
+            sender.sendMsgWithPrefix("&a已删除玩家&6${args[1]}&a的备份&6${args[2]}")
             return
         }
         sender.sendMsgWithPrefix(help())

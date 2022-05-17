@@ -3,7 +3,10 @@ package top.e404.ebackupinv.config
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.InvalidConfigurationException
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.scheduler.BukkitTask
 import top.e404.ebackupinv.EBackupInv
+import top.e404.ebackupinv.util.runTaskAsync
+import top.e404.ebackupinv.util.runTaskLater
 import top.e404.ebackupinv.util.sendOrElse
 import top.e404.ebackupinv.util.warn
 
@@ -16,14 +19,14 @@ import top.e404.ebackupinv.util.warn
  */
 @Suppress("UNUSED")
 abstract class AbstractConfig(
-    val jarPath: String,
-    val path: String = jarPath,
+    val path: String,
+    val jarPath: String? = path,
     val clearBeforeSave: Boolean = false,
 ) {
     val plugin = EBackupInv.instance
-    val default = plugin.getResource(jarPath)!!.use { it.readBytes().decodeToString() }
-    val file = plugin.dataFolder.resolve(jarPath)
+    val file = plugin.dataFolder.resolve(path)
     lateinit var config: YamlConfiguration
+    var task: BukkitTask? = null
 
     /**
      * 保存默认的配置文件
@@ -39,7 +42,11 @@ abstract class AbstractConfig(
                 sender.sendOrElse(s) { warn(s) }
                 return
             }
-            writeText(default)
+            if (jarPath == null) {
+                createNewFile()
+                return@runCatching
+            }
+            writeText(plugin.getResource(jarPath)!!.readBytes().decodeToString())
         }.onFailure {
             val s = "保存默认配置文件`${path}`时出现异常"
             sender.sendOrElse(s) { warn(s, it) }
@@ -77,7 +84,18 @@ abstract class AbstractConfig(
     open fun YamlConfiguration.afterSave() {}
 
     /**
-     * 保存配置到文件
+     * 计划一次保存任务
+     */
+    fun scheduleSave() {
+        if (task != null) return
+        task = runTaskLater(10 * 60 * 20) {
+            task = null
+            runTaskAsync { save(null) }
+        }
+    }
+
+    /**
+     * 立即保存配置到文件
      *
      * @param sender 出现异常时的通知接收者
      * @since 1.0.0
@@ -94,5 +112,11 @@ abstract class AbstractConfig(
             val s = "保存配置文件`${path}`时出现异常"
             sender.sendOrElse(s) { warn(s, t) }
         }
+    }
+
+    fun shutdown() {
+        val t = task ?: return
+        t.cancel()
+        save(null)
     }
 }

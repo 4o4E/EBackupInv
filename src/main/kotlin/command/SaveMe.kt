@@ -2,8 +2,8 @@ package top.e404.ebackupinv.command
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
+import top.e404.ebackupinv.backup.PlayerBackupManager.triggerBackup
 import top.e404.ebackupinv.util.sendMsgWithPrefix
 import java.util.*
 
@@ -29,12 +29,7 @@ object SaveMe : AbstractCommand(
             }
         }
         // 更新cd
-        val backup = BackupData.savePlayer(sender)
-        if (backup == null) {
-            sender.sendMsgWithPrefix("&c空背包将不会被保存")
-            return
-        }
-        cd[sender.uniqueId] = now
-        sender.sendMsgWithPrefix("&a已保存, 背包共${backup.inv.size}件物品, 末影箱共${backup.ec.size}件物品")
+        sender.triggerBackup()
+        sender.sendMsgWithPrefix("&a已保存")
     }
 }

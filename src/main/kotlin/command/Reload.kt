@@ -22,9 +22,7 @@ object Reload : AbstractCommand(
             sender.sendMsgWithPrefix("&a重载完成")
         } catch (t: Throwable) {
             val s = "&c配置文件`config.yml`格式错误".color()
-            sender.sendOrElse(s) {
-                warn(s, t)
-            }
+            sender.sendOrElse(s) { warn(s, t) }
         }
     }
 }

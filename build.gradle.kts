@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "top.e404"
-version = "1.1.1"
+version = "1.2.0"
 
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -18,9 +18,7 @@ repositories {
 
 dependencies {
     // spigot
-    compileOnly("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
-    // spigot
-    compileOnly("org.spigotmc:spigot:1.13.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT")
     // Bstats
     implementation("org.bstats:bstats-bukkit:3.0.0")
 }

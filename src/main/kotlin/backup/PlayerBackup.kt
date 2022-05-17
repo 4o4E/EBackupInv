@@ -1,4 +1,4 @@
-package top.e404.ebackupinv.data
+package top.e404.ebackupinv.backup
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -6,25 +6,30 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import top.e404.ebackupinv.config.BackupData.asTime
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.ceil
 
 /**
- * 代表玩家背包的一次备份
+ * 代表玩家背包的一次备份(一个文件)
  *
+ * @property uuid 玩家uuid
  * @property time 备份时间戳
  * @property inv 背包物品
  * @property ec 末影箱物品
  */
-data class Backup(
+data class PlayerBackup(
+    val uuid: String,
     val time: Long,
     val inv: MutableMap<Int, ItemStack>,
     val ec: MutableMap<Int, ItemStack>,
 ) {
     companion object {
-        fun ConfigurationSection.getBackup(path: String) =
+        fun ConfigurationSection.getBackup(path: String, uuid: String) =
             getConfigurationSection(path)!!.let { config ->
-                Backup(
+                PlayerBackup(
+                    uuid,
                     config.getLong("time"),
                     config.getItemMap("inventory"),
                     config.getItemMap("enderChest")
@@ -58,6 +63,16 @@ data class Backup(
                 .coerceIn(invRange)
                 .let { Bukkit.createInventory(null, it, title) }
                 .also { for ((index, item) in entries) it.setItem(index, item) }
+
+        fun fromFile(f: File, uuid: String) = YamlConfiguration.loadConfiguration(f).getBackup("backup", uuid)
+
+        private val sdf = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
+        fun Long.formatAsTimeStamp() = sdf.format(Date(this))!!
+    }
+
+    fun save() = YamlConfiguration().apply {
+        set("backup", toConfig())
+        save(PlayerBackupManager.backupDir.resolve(uuid).resolve("$time.yml"))
     }
 
     fun toConfig() = YamlConfiguration().apply {
@@ -65,6 +80,4 @@ data class Backup(
         set("inventory", inv.toConfig())
         set("enderChest", ec.toConfig())
     }
-
-    fun info() = """$time, 备份于${time.asTime()}, 包含${inv.size}件背包物品, ${ec.size}件末影箱物品"""
 }

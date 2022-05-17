@@ -2,7 +2,7 @@ package top.e404.ebackupinv.command
 
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import top.e404.ebackupinv.config.BackupData
+import top.e404.ebackupinv.backup.PlayerBackupManager.triggerBackup
 import top.e404.ebackupinv.util.sendMsgWithPrefix
 
 object Save : AbstractCommand(
@@ -33,11 +33,7 @@ object Save : AbstractCommand(
             sender.sendMsgWithPrefix("&c玩家&6${args[1]}&c当前不在线")
             return
         }
-        val backup = BackupData.savePlayer(player)
-        if (backup == null) {
-            sender.sendMsgWithPrefix("&c空背包将不会被保存")
-            return
-        }
-        sender.sendMsgWithPrefix("&a已保存, ${backup.info()}")
+        player.triggerBackup()
+        sender.sendMsgWithPrefix("&a已保存")
     }
 }

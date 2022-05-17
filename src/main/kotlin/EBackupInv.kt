@@ -3,12 +3,12 @@ package top.e404.ebackupinv
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import top.e404.ebackupinv.backup.BackupTaskManager
 import top.e404.ebackupinv.backup.FileBackupTaskManager
 import top.e404.ebackupinv.command.CommandManager
-import top.e404.ebackupinv.config.BackupData
 import top.e404.ebackupinv.config.Config
-import top.e404.ebackupinv.listener.Listener
+import top.e404.ebackupinv.listener.EListener
+import top.e404.ebackupinv.backup.PlayerBackupManager
+import top.e404.ebackupinv.backup.PlayerBackupManager.scheduleBackup
 import top.e404.ebackupinv.update.Update
 import top.e404.ebackupinv.util.info
 import top.e404.ebackupinv.util.runTaskTimerAsync
@@ -29,12 +29,13 @@ class EBackupInv : JavaPlugin() {
         instance = this
         Metrics(this, 14814)
         Config.load(null)
-        BackupData.load(null)
+        //BackupData.load(null)
+        PlayerBackupManager.load(null)
         CommandManager.register("ebackupinv")
-        Listener.register()
+        EListener.register()
         val d = Config.check * 60 * 60 * 20
-        runTaskTimerAsync(d, d, BackupTaskManager::cleanTimeout)
-        BackupTaskManager.hotswap()
+        runTaskTimerAsync(d, d, PlayerBackupManager::cleanTimeout)
+        Bukkit.getOnlinePlayers().forEach { it.scheduleBackup() }
         Update.init()
         FileBackupTaskManager.schedule()
         for (line in logo) info(line)
@@ -42,7 +43,7 @@ class EBackupInv : JavaPlugin() {
     }
 
     override fun onDisable() {
-        BackupData.save(null)
+        PlayerBackupManager.shutdown()
         Bukkit.getScheduler().cancelTasks(this)
     }
 }
