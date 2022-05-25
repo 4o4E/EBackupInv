@@ -78,10 +78,12 @@ object FileBackupTaskManager {
         zos.write(file.readBytes())
     }
 
-    fun clean(dir: File) {
+    private fun clean(dir: File) {
         val files = dir.listFiles() ?: return
         val filter = files.filter { Config.fileRegex.matches(it.name) }
-        if (files.size < Config.fileRetain) return
+        if (Config.fileRetain < 1
+            || files.size < Config.fileRetain
+        ) return
         val sorted = filter.map {
             val date = it.name.removeSuffix(".zip")
             SimpleDateFormat(Config.fileTime).parse(date).time to it
