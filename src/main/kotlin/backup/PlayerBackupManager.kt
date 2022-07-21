@@ -45,10 +45,10 @@ object PlayerBackupManager : AbstractConfig("index.yml", null, true) {
      */
     fun Player.backup() {
         val time = System.currentTimeMillis()
+        val inv = inventory.toItemMap()
+        val ec = enderChest.toItemMap()
+        if (inv.isEmpty() && ec.isEmpty()) return
         runTaskAsync {
-            val inv = inventory.toItemMap()
-            val ec = enderChest.toItemMap()
-            if (inv.isEmpty() && ec.isEmpty()) return@runTaskAsync
             val uuid = uuid()
             PlayerBackup(uuid, time, inv, ec).let {
                 val i = get(name)
@@ -88,6 +88,7 @@ object PlayerBackupManager : AbstractConfig("index.yml", null, true) {
     fun cleanTimeout() {
         val timeout = System.currentTimeMillis() - Config.keep * 60 * 60 * 1000
         index.forEach { it.cleanTimeout(timeout) }
+        index.removeIf { it.backups.isEmpty() }
     }
 
     data class BackupIndex(
