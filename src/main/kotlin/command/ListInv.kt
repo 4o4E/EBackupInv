@@ -25,7 +25,12 @@ object ListInv : AbstractCommand(
         args: Array<out String>,
         complete: MutableList<String>,
     ) {
-        if (args.size == 2) PlayerBackupManager.index.forEach { complete.add(it.name) }
+        if (args.size == 2) {
+            val last = args.last()
+            PlayerBackupManager.index.filter {
+                it.name.contains(last, true)
+            }.forEach { complete.add(it.name) }
+        }
     }
 
     override fun onCommand(sender: CommandSender, args: Array<out String>) {
